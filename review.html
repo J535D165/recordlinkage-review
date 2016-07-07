@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Manual review</title>
+
+		<script src="jquery-3.0.0.min.js"></script>
+		<script src="review.js"></script>
+
+		<script type="text/javascript">
+
+		</script>
+
+
+
+<style type="text/css">
+
+	body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, textarea, p, blockquote, th, td {
+		margin: 0;
+		padding: 0;
+	}
+
+	body {
+	font-family: "Lato", "Helvetica Neue", "Arial", "Verdana", "Tahoma", "Lucida Sans", "FreeSans", "Lucida Sans Unicode", "Luxi Sans", sans-serif;
+	overflow: hidden;
+	padding: 0;
+	margin: 0;
+	position: relative;
+	font-size: 14px;
+	color: #39464E;
+	}
+
+	body {
+		background-color: #f3f5f6;
+	}
+
+	header {
+		background-color: #ffffff;
+	}
+
+	header {
+	height: 58px;
+	box-shadow: 0 0 5px rgba(57, 70, 78, 0.2);
+	position: relative;
+	z-index: 100;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	}
+
+	header h1 {
+	    float: right;
+	    height: 58px;
+	    margin: 10px 20px 10px 10px;
+	}
+
+	html,body { height:100%; }
+
+	table  {
+		border-collapse:collapse;
+		border-spacing:0;
+		border-color:#ccc;
+		margin:0px auto;
+	}
+
+	table td, table tr {
+		width: 80px;
+	}
+
+	td{
+		/*font-family:Arial, */
+		text-align: center;
+		/*sans-serif;*/
+		font-size:14px;
+		padding:10px 5px;
+		border-style:solid;
+		border-width:0px;
+		overflow:hidden;
+		word-break:normal;
+		border-color:#ccc;
+		color:#333;
+		background-color:#fff;
+		border-top-width:1px;
+		border-bottom-width:1px;
+	}
+	
+	th{
+		/*font-family:Arial, */
+		/*sans-serif;*/
+		text-align: center;
+		font-size:14px;
+		font-weight:normal;
+		padding:10px 5px;
+		/*border-style:solid;*/
+		border-width:0px;
+		overflow:hidden;
+		word-break:normal;
+		/*border-color:#ddd;*/
+		color:#999;
+		/*background-color:#f0f0f0;*/
+		/*border-top-width:0px;*/
+		/*border-bottom-width:1px;*/
+	}
+
+	.blank-cell {
+		background-color: transparent;
+	}
+	/*.tg .tg-yw4l{
+		vertical-align:top
+	}
+	.tg .tg-2s1i{vertical-align:top}*/
+
+	@media screen and (max-width: 767px) {
+		table {
+			width: auto !important;
+		}
+		table col {
+			width: auto !important;
+		}
+		table {
+			overflow-x: auto;
+			-webkit-overflow-scrolling: touch;
+			margin: auto 0px;
+		}
+	}
+
+	#content{
+		position: absolute;
+		margin-top: -58px;
+		height: 100%;
+		width: 100%;
+	}
+
+	#content table, #content span{
+		margin-top:58px;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		-moz-transform: translateX(-50%) translateY(-50%);
+		-webkit-transform: translateX(-50%) translateY(-50%);
+		transform: translateX(-50%) translateY(-50%);
+	}
+
+
+
+	#is_match_button {
+		right: 0px; 
+		top: 50%;
+	}
+
+	#is_match_button a{
+		background-color: #4CAF50;
+		border-radius: 4px 0px 0px 4px;
+	}
+	#is_match_button a:hover {
+		opacity: 1.0;
+	}
+
+	#is_distinct_button {
+		left: 0px; 
+		top: 50%;
+	}
+
+	#is_distinct_button a{
+		background-color: #f44336;
+		border-radius: 0px 4px 4px 0px;
+	}
+	#is_distinct_button a:hover {
+		opacity: 1.0;
+	}
+
+	#is_unknown_button {
+		right: 50%; 
+		bottom: 0;
+	}
+
+	#is_unknown_button a{
+		background-color: grey;
+		border-radius: 4px 4px 0px 0px;
+	}
+	#is_unknown_button a:hover {
+		opacity: 1.0;
+	}
+
+	.button{
+		position: fixed;
+	}
+
+	.button a {
+	    border: none;
+	    color: white;
+	    padding: 10px 15px;
+	    text-align: center;
+	    text-decoration: none;
+	    display: inline-block;
+	    font-size: 14px;
+		box-shadow: 0 0 5px rgba(57, 70, 78, 0.2);
+		opacity: 0.8;
+	}
+
+	#press_key {
+		display: none;
+	}
+
+	#last {
+		display: none;
+	}
+
+	.navbutton:hover{
+		border-width: 0px 0px 2px 0px;
+	}
+
+
+/********************
+	  NAVIGATION 		
+********************/
+
+#navigation ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    /*background-color: #333;*/
+
+    position: absolute;
+    bottom: 0;
+}
+
+#navigation li {
+    float: left;
+}
+
+#navigation li a {
+    display: block;
+    color: grey;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    border-bottom-width: 4px;
+   	border-bottom-style: solid;
+    border-bottom-color: white;
+}
+
+#navigation span {
+	width: 16px;
+	margin-left: 6px;
+	text-align: left;
+	display: inline-block;
+}
+
+.active, li a:hover {
+	border-bottom-style: solid;
+    border-bottom-color: grey;
+    border-bottom-width: 4px;
+}
+
+#matchbutton a.active, #matchbutton a:hover{
+    border-bottom-color: #4CAF50;
+
+}
+
+#nonmatchbutton a.active, #nonmatchbutton a:hover{
+    border-bottom-color: #f44336;
+
+}
+
+#unknownbutton a.active, #unknownbutton a:hover{
+    border-bottom-color: grey;
+
+}
+
+#allbutton a.active, #allbutton a:hover{
+    border-bottom-color: lightblue;
+
+}
+
+	</style>
+	</head>
+
+<body>
+<header>
+
+	<div id="navigation">
+		<ul>
+	<!-- 		<ul id="navigation">
+			  <li><a class="active" href="#home">Home</a></li>
+			  <li><a href="#news">News</a></li>
+			  <li><a href="#contact">Contact</a></li>
+			  <li><a href="#about">About</a></li>
+			</ul> -->
+
+			<li class="navbutton" id="matchbutton">
+				<a href="#matches">Match <span class="array_count"></span></a>
+			</li>
+			<li class="navbutton" id="nonmatchbutton">
+				<a href="#distinct">Distinct <span class="array_count"></span></a>
+			</li>
+			<li class="navbutton" id="unknownbutton">
+				<a href="#unknown">Unknown <span class="array_count"></span></a>
+			</li>
+			<li class="navbutton" id="allbutton">
+				<a href="#all">All <span class="array_count"></span></a>
+			</li>
+		</ul>
+	</div>
+
+	<h1>Review</h1>
+	<p id="warning"></p>
+</header>
+
+	<div id='content'>
+
+		<span id="loading">Picking flowers. </span>
+
+		<span id="press_key">Press a key to get started!</span>
+
+		<span id="last">What whut, no records left!</span>
+
+	</div>
+	<div id='is_match_button' class='button'><a>Match</a></div>
+	<div id='is_distinct_button' class='button'><a>Distinct</a></div>
+	<div id='is_unknown_button' class='button'><a>Unknown</a></div>
+
+</body>
+</html>
