@@ -1,5 +1,5 @@
 
-var min_loading_time = 0;
+var min_loading_time = 2000;
 var transition_time = 250;
 
 var current_mode = 'all'; // 'match', 'distinct', 'unknown' or 'all'
@@ -160,6 +160,27 @@ function iterate(table){
 		table.fadeIn(transition_time);
 		// table.attr('class', '.selected');
 
+	    var previousScroll = 0;
+	    
+	    $(window).scroll(function () {
+	       var currentScroll = $(this).scrollTop();
+	       if (currentScroll > previousScroll){
+	           alert('down');
+					onchange();
+
+					// get next pair
+					iterate(next_pair(table));      
+					 }
+	       else {
+	          alert('up');
+					onchange();
+
+					// get next pair
+					iterate(prev_pair(table));      
+					 }
+	       previousScroll = currentScroll;
+	    });
+
 		$('#is_match_button, #is_distinct_button, #is_unknown_button').click(function(){
 
 			// unbind click and keys
@@ -210,7 +231,7 @@ function iterate(table){
 			var kc = event.keyCode;
 
 			// General keycodes for all correct keys
-			if (kc === 37 || kc === 38 || kc === 39 || kc === 40){
+			if (kc === 37 || kc === 38 || kc === 39 || kc === 40 || kc === 191){
 
 				// clear keydown event listener
 				$(document).unbind('keydown');
@@ -241,6 +262,15 @@ function iterate(table){
 
 						iterate(next_pair(table));
 
+					} else if ((kc === 191) ){
+						console.log('Classified as unknown ' + table.attr('id'))
+
+						table.removeClass().addClass('unknown');
+						onchange();
+						
+						// get next pair
+						iterate(next_pair(table));
+
 					} else if (kc === 38){
 						// previous
 						console.log('Previous pair ' + table.attr('id'))
@@ -255,12 +285,13 @@ function iterate(table){
 						// get next pair
 						iterate(next_pair(table));
 
-					}				
+					} 				
+
 				});
 			} else {
 				// unknown key
 				console.log("Unknown key")
-				warning("Unknown key used.")
+				warning("Unknown key used. See the <a href='https://github.com/J535D165/recordlinkage-review' target='_blank'>documentation</a>.")
 			}
 		})
 	} else {
@@ -318,7 +349,16 @@ function prev_pair(table){
 
 function warning(msg){
 
-	$('#warning').text(msg);
+	console.log("Warning: " + msg);
+
+	if (msg !== ""){
+		$('#warning p').html(msg);
+		$('#warning').show();
+	} else{
+		$('#warning p').html("")
+		$('#warning').hide();
+	}
+	
 }
 
 function is_valid(json){
@@ -377,6 +417,8 @@ function navigation(){
 }
 
 $(document).ready(function(){
+
+    var previousScroll = 0;
 
 	var d = new Date();
 	var starttime = d.getTime();
@@ -476,5 +518,24 @@ $(document).ready(function(){
 
 
 });
+
+(function () {
+    var previousScroll = 0;
+
+
+    
+    $('#content').scroll(function () {
+    	console.log('test')
+
+       var currentScroll = $(this).scrollTop();
+       if (currentScroll > previousScroll){
+           alert('down');
+       }
+       else {
+          alert('up');
+       }
+       previousScroll = currentScroll;
+    });
+}());
 
 
