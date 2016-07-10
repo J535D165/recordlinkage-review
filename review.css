@@ -18,6 +18,8 @@
 		min-height: 100%;
 	}
 
+	button:focus {outline:0;}
+
 	/*************************
 		  Components
 	*************************/
@@ -167,41 +169,53 @@
 	#classification{
 		margin-left: auto;
 		margin-right: auto;
-		width: 400px;
-		padding: 8px 20px; 
+		width: 420px;
+		/*padding: 8px 20px; */
 		margin-bottom: 20px;
 
 	}
 
 	#classification button{
-		float: left;
-		width: 125px;		
 
-		background-color: transparent; 
-		border: none;
-		color: grey;
+		float: left;
+		display: inline-block;
+		width: 120px;		
 		padding: 15px 32px;
+		margin: 20px 10px;
+
+		background-color: white; 
+
+	    border-radius: 4px;
+		border: none;
+		box-shadow: 0px 3px 3px rgba(57, 70, 78, 0.2);
+
+		font-size: 14px;
+		color: grey;
 		text-align: center;
 		text-decoration: none;
 
-		display: inline-block;
-		font-size: 16px;
-		margin: 4px 2px;
-	}
-
-	#is_match_button:hover{
-		color: #4CAF50;
+		cursor: pointer;
 
 	}
 
-	#is_distinct_button:hover{
-		color: #f44336;
+	#is_match_button:hover, #is_match_button:active, #is_match_button:focus{
+		background-color: rgba(76, 175, 80, 0.6);
+	}
+
+	#is_distinct_button:hover, #is_distinct_button:active, #is_distinct_button:focus{
+		background-color: rgba(244, 67, 54, 0.6);
 
 	}
 
-	#is_unknown_button:hover{
-		color: grey;
+	#is_unknown_button:hover, #is_unknown_button:active, #is_unknown_button:focus{
+		background-color: rgba(128, 128, 128, 0.6);
 
+
+	}
+
+	#classification button:hover, #classification button:active, #classification button:focus{
+		box-shadow: 0px 3px 3px rgba(57, 70, 78, 0.2) inset;
+		color:white;
 	}
 
 
