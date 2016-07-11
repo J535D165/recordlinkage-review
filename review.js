@@ -98,10 +98,10 @@ function onchange(){
 	q = count_unknown();
 
 	// Update the html text
-	$('#matchbutton span').text(m);
-	$('#nonmatchbutton span').text(u);
-	$('#unknownbutton span').text(count_unknown());
-	$('#allbutton span').text(m+u+q);
+	$('#matchbutton span').text(m).fadeIn(600);
+	$('#nonmatchbutton span').text(u).fadeIn(600);
+	$('#unknownbutton span').text(count_unknown()).fadeIn(600);
+	$('#allbutton span').text(m+u+q).fadeIn(600);
 
 }
 
@@ -135,6 +135,7 @@ function start(){
 
 		// start at keypress
 		$('#press_key').fadeIn(600);
+
 	
 		// Add a key listener to start
 		$(document).one( "keydown", function() {
@@ -145,6 +146,8 @@ function start(){
 			onchange();
 
 			$('#press_key').fadeOut(600, function(){
+
+				// start with first record
 				iterate(first_pair());
 			});
 		})
@@ -160,40 +163,45 @@ function iterate(table){
 		table.fadeIn(transition_time);
 		// table.attr('class', '.selected');
 
-	    var previousScroll = 0;
+		$('#classification').fadeIn(600);
+
+	    // var previousScroll = 0;
 	    
-	    $(window).scroll(function () {
-	       var currentScroll = $(this).scrollTop();
-	       if (currentScroll > previousScroll){
-	           alert('down');
-					onchange();
+	    // $(window).scroll(function () {
+	    //    var currentScroll = $(this).scrollTop();
+	    //    if (currentScroll > previousScroll){
+	    //        alert('down');
+					// onchange();
 
-					// get next pair
-					iterate(next_pair(table));      
-					 }
-	       else {
-	          alert('up');
-					onchange();
+					// // get next pair
+					// iterate(next_pair(table));      
+					//  }
+	    //    else {
+	    //       alert('up');
+					// onchange();
 
-					// get next pair
-					iterate(prev_pair(table));      
-					 }
-	       previousScroll = currentScroll;
-	    });
+					// // get next pair
+					// iterate(prev_pair(table));      
+					//  }
+	    //    previousScroll = currentScroll;
+	    // });
 
 		$('#is_match_button, #is_distinct_button, #is_unknown_button').click(function(){
-
-			// unbind click and keys
-			$(document).unbind('keydown');
-			$('#is_match_button, #is_distinct_button, #is_unknown_button').unbind("click");
-
+			
+			// clicked
 			console.log("clicked");
-			var bc = $(this).attr('id');
+
+			// disable controls
+			disable_controls();
+
 			// clear warning
 			warning("");
 
+			// classification ID
+			var bc = $(this).attr('id');
+
 			// remove table
-			table.fadeOut(transition_time,  function(){
+			table.add('#classification').fadeOut(transition_time,  function(){
 
 				if (bc === "is_match_button"){
 					// match (right)
@@ -233,15 +241,13 @@ function iterate(table){
 			// General keycodes for all correct keys
 			if (kc === 37 || kc === 38 || kc === 39 || kc === 40 || kc === 191){
 
-				// clear keydown event listener
-				$(document).unbind('keydown');
-				$('#is_match_button, #is_distinct_button, #is_unknown_button').unbind("click");
+				disable_controls();
 
 				// clear warning
 				warning("");
 
 				// remove table
-				table.fadeOut(transition_time,  function(){
+				table.add('#classification').fadeOut(transition_time,  function(){
 
 					if (kc === 39){
 						// match (right)
@@ -300,6 +306,51 @@ function iterate(table){
 		$('#last').fadeIn(transition_time);
 	}
 }
+
+function disable_controls(){
+
+	// unbind click and keys
+	$(document).unbind('keydown');
+	$('#is_match_button, #is_distinct_button, #is_unknown_button').unbind("click");
+
+}
+
+// function classify_table(classification_str){
+
+// 	// var bc = $(this).attr('id');
+// 	console.log('Classified as match ' + classification_str);
+
+// 	// remove table
+// 	table.fadeOut(transition_time,  function(){
+
+// 		if (classification_str === "match"){
+// 			// match (right)
+
+// 			table.removeClass().addClass('match');
+// 			onchange();
+
+// 			// get next pair
+// 			iterate(next_pair(table));
+
+// 		} else if (classification_str === "distinct"){
+// 			// distinct (left)
+// 			console.log('Classified as distinct ' + table.attr('id'));
+
+// 			table.removeClass().addClass('distinct');
+// 			onchange();
+
+// 			iterate(next_pair(table));
+
+// 		} else if (classification_str === "is_unknown_button"){
+// 			// next
+// 			console.log('Next pair ' + table.attr('id'));
+
+// 			// get next pair
+// 			iterate(next_pair(table));
+
+// 		} 
+// 	});
+// }
 
 function next_pair(table){
 
@@ -519,23 +570,23 @@ $(document).ready(function(){
 
 });
 
-(function () {
-    var previousScroll = 0;
+// (function () {
+//     var previousScroll = 0;
 
 
     
-    $('#content').scroll(function () {
-    	console.log('test')
+//     $('#content').scroll(function () {
+//     	console.log('test')
 
-       var currentScroll = $(this).scrollTop();
-       if (currentScroll > previousScroll){
-           alert('down');
-       }
-       else {
-          alert('up');
-       }
-       previousScroll = currentScroll;
-    });
-}());
+//        var currentScroll = $(this).scrollTop();
+//        if (currentScroll > previousScroll){
+//            alert('down');
+//        }
+//        else {
+//           alert('up');
+//        }
+//        previousScroll = currentScroll;
+//     });
+// }());
 
 
