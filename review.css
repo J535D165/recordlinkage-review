@@ -203,7 +203,7 @@ header h1 {
 	background-color: rgba(76, 175, 80, 0.6);
 }
 
-#is_distinct_button:hover, #is_distinct_button:active, #is_distinct_button:focus{
+#is_distinct_button:hover, #is_distinct_button:active, #is_distinct_button:focus, #is_distinct_button .activebutton{
 	background-color: rgba(244, 67, 54, 0.6);
 
 }
@@ -214,7 +214,7 @@ header h1 {
 
 }
 
-#classification button:hover, #classification button:active, #classification button:focus{
+#classification button:hover, #classification button:active, #classification button:focus, #is_distinct_button .activebutton{
 	box-shadow: 0px 3px 3px rgba(57, 70, 78, 0.2) inset;
 	color:white;
 }

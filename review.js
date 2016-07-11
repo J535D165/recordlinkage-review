@@ -160,10 +160,14 @@ function iterate(table){
 
 	if (table.length !== 0){
 
-		table.fadeIn(transition_time);
+		table.add('#classification').fadeIn(transition_time);
 		// table.attr('class', '.selected');
 
-		$('#classification').fadeIn(600);
+		console.log(table.attr('class'))
+		if (table.hasClass('unknown')){
+			console.log("This record match")
+			$('#is_unknown_button').addClass('activebutton')
+		}
 
 	    // var previousScroll = 0;
 	    
@@ -245,6 +249,35 @@ function iterate(table){
 
 				// clear warning
 				warning("");
+
+				// if (kc === 39){
+				// 	// match (right)
+				// 	cl = "match";
+
+				// } else if (kc === 37){
+				// 	// distinct (left)
+				// 	cl = "distinct";
+
+				// } else if ((kc === 191) ){
+				// 	// unknown
+				// 	cl = "unknown";
+
+				// } else if (kc === 38){
+				// 	// previous
+				// 	console.log('Previous pair ' + table.attr('id'))
+
+				// 	// get next pair
+				// 	iterate(prev_pair(table));
+
+				// } else if (kc === 40){
+				// 	// next 
+				// 	console.log('Next pair ' + table.attr('id'))
+
+				// 	// get next pair
+				// 	iterate(next_pair(table));
+
+				// } 				
+
 
 				// remove table
 				table.add('#classification').fadeOut(transition_time,  function(){
@@ -400,9 +433,9 @@ function prev_pair(table){
 
 function warning(msg){
 
-	console.log("Warning: " + msg);
-
 	if (msg !== ""){
+		console.log("Warning: " + msg);
+
 		$('#warning p').html(msg);
 		$('#warning').show();
 	} else{
