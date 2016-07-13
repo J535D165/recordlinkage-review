@@ -5,72 +5,65 @@ var transition_time = 250;
 var current_mode = 'all'; // 'match', 'distinct', 'unknown' or 'all'
 
 var no_record_message = 'What whut, no records left!';
+
 /**********************
 	USER INTERFACE
 **********************/
 
-function create_table_pair(linkbox, id, match_class){
+function create_table_pair(link, source, target){
 	// Function to create html tables
 	// Useful for inserting in page
 
 
-	if (!match_class){
+	if (!link._match){
 		match_class = 'unknown';
+	} else{
+		match_class = link._match;
 	}
 
 	// console.log(records)
 
-	var table_str = '<table style="display:none;" id="' + id + '" class="' + match_class + '" >'; 
+	th_source = [];
+	td_source = [];
+	td_target = [];
+	th_target = [];
 
-	// add header
-	table_str += '<tr>';
-	$.each(linkbox, function(_, td){
-		if (td.description_source){
-			table_str += '<th>' + td.description_source + '</th>';
-		} else {
-			table_str += '<th class="blank-cell"></th>';
+	$.each(link.compare, function(_, c){
+
+		if ((c._source in source) ){
+			th_source.push('<th>' + c._source + '</th>');
+		} else{
+			th_source.push('<th class="blank-cell"></th>');
 		}
+
+		if ((c._source in source) ){
+			td_source.push('<td>' + source[c._source] + '</td>');
+		} else {
+			td_source.push('<td></td>');
+		}
+
+		if ((c._target in target) ){
+			td_target.push('<td>' + target[c._target] + '</td>');
+		} else {
+			td_target.push('<td></td>');
+		}
+
+		if ((c._target in target) ){
+			th_target.push('<th>' + c._target + '</th>');
+		} else{
+			th_target.push('<th class="blank-cell"></th>');
+		}
+
 	});
 
-	table_str += '</tr>'		
+	var table_str = '<table>' + '<tr>' + th_source.join("") + '</tr>' + '<tr>' + td_source.join("") + '</tr>' + '<tr>' + td_target.join("") + '</tr>' + '<tr>' + th_target.join("") + '</tr>' + '</table>';
 
-	// add source
-	table_str += '<tr>'
-	$.each(linkbox, function(_, td){
-		if (td.value_source){
-			table_str += '<td>' + td.value_source + '</td>';
-		} else {
-			table_str += '<td></td>';
-		}
-	});
-	table_str += '</tr>'		
+	table = $(table_str);
+	table.hide();
+	table.addClass(match_class);
+	// table.data()
 
-	// add target
-	table_str += '<tr>'
-	$.each(linkbox, function(_, td){
-		if (td.value_target){
-			table_str += '<td>' + td.value_target + '</td>';
-		} else {
-			table_str += '<td></td>';
-		}
-	});
-	table_str += '</tr>'
-
-	// add header
-	table_str += '<tr>'
-	$.each(linkbox, function(_, td){
-		if (td.description_target){
-			table_str += '<th>' + td.description_target + '</th>';
-		} else {
-			table_str += '<th class="blank-cell></th>';
-		}
-	});
-	table_str += '</tr>';
-
-	// end table
-	table_str += '</table>';
-
-	return table_str
+	return table
 }
 
 function count_matches(){
@@ -105,9 +98,6 @@ function onchange(){
 
 }
 
-function get_internal_pair_id(tree_i, link_i){
-	return 'pair_' + tree_i.toString() + '_' + link_i.toString()
-}
 
 /**********************
         INTERNAL
@@ -512,15 +502,9 @@ $(document).ready(function(){
 		url: "data.json",
 		dataType: "json",
 		success: function(data){
-			// console.log(data)
-
-			// // Initialize
-			// onchange();
 
 			forest = data['forest'];
 			trees = forest['tree'];
-
-			// console.log(trees)
 
 			if (!is_valid(data)){
 				alert('Problem with the data! Fix this first.');
@@ -532,56 +516,13 @@ $(document).ready(function(){
 
 					is_match = link._match;
 
-					rec_source = get_record(tree, link.source._document, link.source._id);
-					rec_target = get_record(tree, link.target._document, link.target._id)
+					// The three things needed
+					console.log(link);
+					console.log(tree.source[link.source._id]);
+					console.log(tree.target[link.target._id]);
 
-					// console.log(rec_source)
-					// console.log(link.compare)
+					$('#content').append(create_table_pair(link, tree.source[link.source._id], tree.target[link.target._id]));
 
-					var linkbox = [];
-
-					$.each(link.compare, function(_, c){
-
-						// console.log(c._source);
-						try{
-							value_source = rec_source.field[c._source].value;
-						} catch(err){
-							value_source = null;
-						}
-						try{
-							description_source = rec_source.field[c._source]._description;
-						} catch(err) {
-							description_source = null;
-						}
-
-						try{
-							value_target = rec_target.field[c._target].value;
-						} catch(err){
-							value_target = null;
-						}
-
-						try{
-							description_target = rec_target.field[c._target]._description;
-						} catch(err){
-							description_target = null;
-						}
-
-						compare = c.value;
-
-						linkbox.push({
-							'value_source': value_source,
-							'description_source': description_source,
-							'value_target': value_target,
-							'description_target': description_target,
-							'compare': compare
-						});
-
-					});
-
-					console.log(linkbox);
-
-					$('#content').append(create_table_pair(linkbox, get_internal_pair_id(tree_i, link_i), is_match));
-					// foo(linkbox, tree_i, link_i);
 				});
 
 			});
