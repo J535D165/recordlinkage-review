@@ -14,6 +14,7 @@ Reviewer
 --------
 
 Features:
+
 - Use keyboard for classification; Right arrow is match, Left arrow is distinct. Use arrow up and down for next record pair. 
 - Use buttons for classification
 - Use navigation menu for changing categories. 
