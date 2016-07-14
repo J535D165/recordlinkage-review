@@ -14,7 +14,6 @@ function create_table_pair(link, source, target){
 	// Function to create html tables
 	// Useful for inserting in page
 
-
 	if (!link._match){
 		match_class = 'unknown';
 	} else{
@@ -97,39 +96,37 @@ function onchange(){
 
 }
 
+function warning(msg){
+
+	if (msg !== ""){
+		console.log("Warning: " + msg);
+
+		$('#warning p').html(msg);
+		$('#warning').show();
+	} else{
+		$('#warning p').html("")
+		$('#warning').hide();
+	}
+	
+}
 
 /**********************
         INTERNAL
 **********************/
 
-function get_record(tree, _document, _id){
+// function get_record(tree, _document, _id){
 
-	var record;
-	$.each(tree['records'], function(_, record_i){
+// 	var record;
+// 	$.each(tree['records'], function(_, record_i){
 
-		if ((record_i._document == _document) & (record_i._id == _id)){
-			record = record_i;
-		}
-	});
+// 		if ((record_i._document == _document) & (record_i._id == _id)){
+// 			record = record_i;
+// 		}
+// 	});
 
-	return record
-};
+// 	return record
+// };
 
-function download(){
-
-	result_str = "id1,id2,class \n"
-
-	$('#content table').each(function(){
-
-		result_str += [
-			$(this).data("sourceID").toString(), 
-			$(this).data("targetID").toString(), 
-			$(this).attr("class").toString()
-			].join() + "\n"
-	});
-
-	return result_str
-}
 
 function start(){
 
@@ -145,7 +142,6 @@ function start(){
 			this.href = "data:text/plain;charset=UTF-8," + encodeURIComponent(download())
 		});
 
-	
 		// Add a key listener to start
 		$(document).one( "keydown", function() {
 
@@ -163,6 +159,28 @@ function start(){
 	});
 }
 
+function download(){
+
+	result_str = "id1,id2,class \n"
+
+	$('#content table').each(function(){
+
+		result_str += [
+			$(this).data("sourceID").toString(), 
+			$(this).data("targetID").toString(), 
+			$(this).attr("class").toString()
+			].join() + "\n"
+	});
+
+	return result_str
+}
+
+// show pair (visual and bindings) --> classify (give class) --> hide pair ()
+
+function show_pair(table){
+
+}
+
 function iterate(table){
 
 	// console.log(table)
@@ -170,39 +188,12 @@ function iterate(table){
 	if (table.length !== 0){
 
 		table.add('#classification').fadeIn(transition_time);
-		// table.attr('class', '.selected');
 
-		console.log(table.attr('class'))
 		if (table.hasClass('unknown')){
-			console.log("This record match")
 			$('#is_unknown_button').addClass('activebutton')
 		}
 
-	    // var previousScroll = 0;
-	    
-	    // $(window).scroll(function () {
-	    //    var currentScroll = $(this).scrollTop();
-	    //    if (currentScroll > previousScroll){
-	    //        alert('down');
-					// onchange();
-
-					// // get next pair
-					// iterate(next_pair(table));      
-					//  }
-	    //    else {
-	    //       alert('up');
-					// onchange();
-
-					// // get next pair
-					// iterate(prev_pair(table));      
-					//  }
-	    //    previousScroll = currentScroll;
-	    // });
-
 		$('#is_match_button, #is_distinct_button, #is_unknown_button').click(function(){
-			
-			// clicked
-			console.log("clicked");
 
 			// disable controls
 			disable_controls();
@@ -210,34 +201,39 @@ function iterate(table){
 			// clear warning
 			warning("");
 
-			// classification ID
 			var bc = $(this).attr('id');
 
 			// remove table
 			table.add('#classification').fadeOut(transition_time,  function(){
 
 				if (bc === "is_match_button"){
-					// match (right)
-					console.log('Classified as match ' + table.attr('id'));
 
 					table.removeClass().addClass('match');
+					$('#is_match_button, #is_distinct_button, #is_unknown_button').removeClass();
+					$('#is_match_button').addClass('selected');
+
 					onchange();
 
 					// get next pair
 					iterate(next_pair(table));
 
 				} else if (bc === "is_distinct_button"){
-					// distinct (left)
-					console.log('Classified as distinct ' + table.attr('id'));
 
 					table.removeClass().addClass('distinct');
+					$('#is_match_button, #is_distinct_button, #is_unknown_button').removeClass();
+					$('#is_distinct_button').addClass('selected');
+
 					onchange();
 
 					iterate(next_pair(table));
 
 				} else if (bc === "is_unknown_button"){
-					// next
-					console.log('Next pair ' + table.attr('id'));
+
+					table.removeClass().addClass('unknown');
+					$('#is_match_button, #is_distinct_button, #is_unknown_button').removeClass();
+					$('#is_unknown_button').addClass('selected');
+
+					onchange();
 
 					// get next pair
 					iterate(next_pair(table));
@@ -259,35 +255,6 @@ function iterate(table){
 				// clear warning
 				warning("");
 
-				// if (kc === 39){
-				// 	// match (right)
-				// 	cl = "match";
-
-				// } else if (kc === 37){
-				// 	// distinct (left)
-				// 	cl = "distinct";
-
-				// } else if ((kc === 191) ){
-				// 	// unknown
-				// 	cl = "unknown";
-
-				// } else if (kc === 38){
-				// 	// previous
-				// 	console.log('Previous pair ' + table.attr('id'))
-
-				// 	// get next pair
-				// 	iterate(prev_pair(table));
-
-				// } else if (kc === 40){
-				// 	// next 
-				// 	console.log('Next pair ' + table.attr('id'))
-
-				// 	// get next pair
-				// 	iterate(next_pair(table));
-
-				// } 				
-
-
 				// remove table
 				table.add('#classification').fadeOut(transition_time,  function(){
 
@@ -296,7 +263,6 @@ function iterate(table){
 						console.log('Classified as match ' + table.attr('id'));
 
 						table.removeClass().addClass('match');
-						onchange();
 
 						// get next pair
 						iterate(next_pair(table));
@@ -306,7 +272,6 @@ function iterate(table){
 						console.log('Classified as distinct ' + table.attr('id'))
 
 						table.removeClass().addClass('distinct');
-						onchange();
 
 						iterate(next_pair(table));
 
@@ -314,7 +279,6 @@ function iterate(table){
 						console.log('Classified as unknown ' + table.attr('id'))
 
 						table.removeClass().addClass('unknown');
-						onchange();
 						
 						// get next pair
 						iterate(next_pair(table));
@@ -333,7 +297,9 @@ function iterate(table){
 						// get next pair
 						iterate(next_pair(table));
 
-					} 				
+					} 	
+
+					onchange();
 
 				});
 			} else {
@@ -428,31 +394,8 @@ function prev_pair(table){
 	}
 }
 
-// function classify_as_match(table){
 
-// }
 
-// function classify_as_distinct(){
-	
-// }
-
-// function classify_as_unknown(){
-	
-// }
-
-function warning(msg){
-
-	if (msg !== ""){
-		console.log("Warning: " + msg);
-
-		$('#warning p').html(msg);
-		$('#warning').show();
-	} else{
-		$('#warning p').html("")
-		$('#warning').hide();
-	}
-	
-}
 
 function is_valid(json){
 	return true
