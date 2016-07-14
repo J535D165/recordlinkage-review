@@ -61,7 +61,6 @@ function create_table_pair(link, source, target){
 	table = $(table_str);
 	table.hide();
 	table.addClass(match_class);
-	// table.data()
 
 	return table
 }
@@ -116,6 +115,22 @@ function get_record(tree, _document, _id){
 	return record
 };
 
+function download(){
+
+	result_str = "id1,id2,class \n"
+
+	$('#content table').each(function(){
+
+		result_str += [
+			$(this).data("sourceID").toString(), 
+			$(this).data("targetID").toString(), 
+			$(this).attr("class").toString()
+			].join() + "\n"
+	});
+
+	return result_str
+}
+
 function start(){
 
 	// starting message
@@ -125,6 +140,10 @@ function start(){
 
 		// start at keypress
 		$('#press_key').fadeIn(600);
+
+		$("#download-btn").click(function(){
+			this.href = "data:text/plain;charset=UTF-8," + encodeURIComponent(download())
+		});
 
 	
 		// Add a key listener to start
@@ -499,7 +518,7 @@ $(document).ready(function(){
 
 	// load the data
 	$.ajax({
-		url: "data.json",
+		url: "../example/data.json",
 		dataType: "json",
 		success: function(data){
 
@@ -521,7 +540,11 @@ $(document).ready(function(){
 					console.log(tree.source[link.source._id]);
 					console.log(tree.target[link.target._id]);
 
-					$('#content').append(create_table_pair(link, tree.source[link.source._id], tree.target[link.target._id]));
+					jquery_table = create_table_pair(link, tree.source[link.source._id], tree.target[link.target._id]);
+					jquery_table.data("targetID", link.target._id);
+					jquery_table.data("sourceID", link.source._id);
+
+					$('#content').append(jquery_table);
 
 				});
 

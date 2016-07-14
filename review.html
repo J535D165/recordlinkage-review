@@ -4,10 +4,10 @@
 	<head>
 		<title>Manual review</title>
 
-		<script src="jquery-3.0.0.min.js"></script>
-		<script src="review.js"></script>
+		<script src="static/jquery-3.0.0.min.js"></script>
+		<script src="static/review.js"></script>
 
-		<link rel="stylesheet" type="text/css" href="review.css">
+		<link rel="stylesheet" type="text/css" href="static/review.css">
 
 	</head>
 
@@ -28,14 +28,19 @@
 			<li class="navbutton" id="allbutton">
 				<a href="#all">All <span class="array_count"></span></a>
 			</li>
+			<li class="navbutton">
+				<a id="download-btn" href="" download="classification.csv">Download</a>
+			</li>
 		</ul>
 	</div>
 
+	
 	<h1>Review</h1>
 </header>
 
+	<div id="warning"><p>Display an error</p></div>
+
 	<div id='content'>
-		<div id="warning"><p>Display an error</p></div>
 
 		<div id="loading">Picking flowers. </div>
 

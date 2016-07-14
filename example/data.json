@@ -139,7 +139,7 @@
 {
             "source": {
 
-                "1":{
+                "2":{
                     "name": "Bart",
                     "lastname": "Smith",
                     "dob": "07-02-1999",
@@ -148,7 +148,7 @@
                 }
             },
             "target": {
-                "1":{
+                "8":{
                     "name": "Bart",
                     "lastname": "Smith",
                     "dob": "07-02-1999",
@@ -192,12 +192,12 @@
 
                     "target": {
                         "_document": "documentA",
-                        "_id":"1"
+                        "_id":"8"
                         },
 
                     "source": {
                         "_document": "documentB",
-                        "_id": "1"
+                        "_id": "2"
                         },
 
                     "_match": null
