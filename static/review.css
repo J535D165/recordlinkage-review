@@ -203,33 +203,24 @@ header h1 {
 
 }
 
-#is_match_button:hover, #is_match_button:active, #is_match_button:focus, #is_match_button.activebutton{
+#is_match_button:hover, #is_match_button:active, #is_match_button.activebutton{
 	background-color: rgba(76, 175, 80, 0.6);
-}
-
-#is_distinct_button:hover, #is_distinct_button:active, #is_distinct_button:focus, #is_distinct_button.activebutton{
-	background-color: rgba(244, 67, 54, 0.6);
-
-}
-
-#is_unknown_button:hover, #is_unknown_button:active, #is_unknown_button:focus, #is_unknown_button.activebutton{
-	background-color: rgba(128, 128, 128, 0.6);
-
-
-}
-
-/*#classification button:hover, #classification button:active, #classification button:focus, */
-.activebutton{
 	box-shadow: 0px 3px 3px rgba(57, 70, 78, 0.2) inset;
 	color:white;
 }
 
+#is_distinct_button:hover, #is_distinct_button:active, #is_distinct_button.activebutton{
+	background-color: rgba(244, 67, 54, 0.6);
+	box-shadow: 0px 3px 3px rgba(57, 70, 78, 0.2) inset;
+	color:white;
+}
 
-/*
-.navbutton:hover{
-	border-width: 0px 0px 2px 0px;
-}*/
+#is_unknown_button:hover, #is_unknown_button:active, #is_unknown_button.activebutton{
+	background-color: rgba(128, 128, 128, 0.6);
+	box-shadow: 0px 3px 3px rgba(57, 70, 78, 0.2) inset;
+	color:white;
 
+}
 
 /********************
 	  NAVIGATION 		

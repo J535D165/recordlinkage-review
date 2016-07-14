@@ -1,10 +1,13 @@
-
+// SETTINGS
 var min_loading_time = 2000;
 var transition_time = 250;
 
 var current_mode = 'all'; // 'match', 'distinct', 'unknown' or 'all'
 
-var no_record_message = 'What whut, no records left!';
+var no_record_message = 'What whut, no records (left)!';
+
+// INTERNALS
+var started = false;
 
 /**********************
 	USER INTERFACE
@@ -148,6 +151,8 @@ function start(){
 			// Remove the message and start comparing
 			console.log('Start with reviewing the first record pair.')
 
+			started = true;
+
 			onchange();
 
 			$('#press_key').fadeOut(600, function(){
@@ -187,132 +192,106 @@ function iterate(table){
 
 	if (table.length !== 0){
 
+		$('#is_match_button, #is_distinct_button, #is_unknown_button').removeClass("activebutton");
+
 		table.add('#classification').fadeIn(transition_time);
 
 		if (table.hasClass('unknown')){
 			$('#is_unknown_button').addClass('activebutton')
-		}
+		} else if (table.hasClass('match')){
+			$('#is_match_button').addClass('activebutton')
+		} else if (table.hasClass('distinct')){
+			$('#is_distinct_button').addClass('activebutton')
+		} 
 
+		// click_or_press
 		$('#is_match_button, #is_distinct_button, #is_unknown_button').click(function(){
-
-			// disable controls
-			disable_controls();
-
-			// clear warning
-			warning("");
-
-			var bc = $(this).attr('id');
-
-			// remove table
-			table.add('#classification').fadeOut(transition_time,  function(){
-
-				if (bc === "is_match_button"){
-
-					table.removeClass().addClass('match');
-					$('#is_match_button, #is_distinct_button, #is_unknown_button').removeClass();
-					$('#is_match_button').addClass('selected');
-
-					onchange();
-
-					// get next pair
-					iterate(next_pair(table));
-
-				} else if (bc === "is_distinct_button"){
-
-					table.removeClass().addClass('distinct');
-					$('#is_match_button, #is_distinct_button, #is_unknown_button').removeClass();
-					$('#is_distinct_button').addClass('selected');
-
-					onchange();
-
-					iterate(next_pair(table));
-
-				} else if (bc === "is_unknown_button"){
-
-					table.removeClass().addClass('unknown');
-					$('#is_match_button, #is_distinct_button, #is_unknown_button').removeClass();
-					$('#is_unknown_button').addClass('selected');
-
-					onchange();
-
-					// get next pair
-					iterate(next_pair(table));
-
-				} 
-			});
+			classify_pair(event, table);
 		});
 
-
 		$(document).keydown(function(event){
+			classify_pair(event, table);
+		}); 
 
-			var kc = event.keyCode;
-
-			// General keycodes for all correct keys
-			if (kc === 37 || kc === 38 || kc === 39 || kc === 40 || kc === 191){
-
-				disable_controls();
-
-				// clear warning
-				warning("");
-
-				// remove table
-				table.add('#classification').fadeOut(transition_time,  function(){
-
-					if (kc === 39){
-						// match (right)
-						console.log('Classified as match ' + table.attr('id'));
-
-						table.removeClass().addClass('match');
-
-						// get next pair
-						iterate(next_pair(table));
-
-					} else if (kc === 37){
-						// distinct (left)
-						console.log('Classified as distinct ' + table.attr('id'))
-
-						table.removeClass().addClass('distinct');
-
-						iterate(next_pair(table));
-
-					} else if ((kc === 191) ){
-						console.log('Classified as unknown ' + table.attr('id'))
-
-						table.removeClass().addClass('unknown');
-						
-						// get next pair
-						iterate(next_pair(table));
-
-					} else if (kc === 38){
-						// previous
-						console.log('Previous pair ' + table.attr('id'))
-
-						// get next pair
-						iterate(prev_pair(table));
-
-					} else if (kc === 40){
-						// next 
-						console.log('Next pair ' + table.attr('id'))
-
-						// get next pair
-						iterate(next_pair(table));
-
-					} 	
-
-					onchange();
-
-				});
-			} else {
-				// unknown key
-				console.log("Unknown key")
-				warning("Unknown key used. See the <a href='https://github.com/J535D165/recordlinkage-review' target='_blank'>documentation</a>.")
-			}
-		})
 	} else {
 		// last record in list
 		console.log("Last record")
 		$('#last').fadeIn(transition_time);
 	}
+}
+
+function classify_pair(event, table){
+
+	next = true;
+
+	if ((event.keyCode === 39) || (event.currentTarget.id === "is_match_button")){
+
+		console.log('Classified as match');
+		disable_controls();
+		warning("");
+
+		table.removeClass().addClass('match');
+		$('#is_match_button, #is_distinct_button, #is_unknown_button').removeClass("activebutton");
+		$('#is_match_button').addClass("activebutton");
+
+	} else if ((event.keyCode === 37) || (event.currentTarget.id === "is_distinct_button")){
+
+		console.log('Classified as distinct')
+		disable_controls();
+		warning("");
+
+		table.removeClass().addClass('distinct');
+		$('#is_match_button, #is_distinct_button, #is_unknown_button').removeClass("activebutton");
+		$('#is_distinct_button').addClass("activebutton");
+
+	} else if ((event.keyCode === 191) || (event.currentTarget.id === "is_unknown_button")){
+		
+		console.log('Classified as unknown')
+		disable_controls();
+		warning("");
+
+		table.removeClass().addClass('unknown');
+		$('#is_match_button, #is_distinct_button, #is_unknown_button').removeClass("activebutton");
+		$('#is_unknown_button').addClass("activebutton");
+
+	} else if (event.keyCode === 38){
+
+		console.log('Previous pair')
+		disable_controls();
+		warning("");
+
+		next = false;
+
+	} else if (event.keyCode === 40){
+
+		console.log('Next pair')
+		disable_controls();
+		warning("");
+
+	} else {
+
+		// unknown key
+		warning("Unknown key used. See the <a href='https://github.com/J535D165/recordlinkage-review' target='_blank'>documentation</a>.")
+
+		next =null; //Do not go to the following or previous record
+	}	
+
+	onchange();
+
+	if ((next ==true ) || (next == false)){
+		// remove table
+		table.add('#classification').fadeOut(transition_time,  function(){
+
+			// get next pair
+			iterate(next_pair(table));
+
+		});
+
+	} else{
+
+	}
+
+
 }
 
 function disable_controls(){
@@ -322,43 +301,6 @@ function disable_controls(){
 	$('#is_match_button, #is_distinct_button, #is_unknown_button').unbind("click");
 
 }
-
-// function classify_table(classification_str){
-
-// 	// var bc = $(this).attr('id');
-// 	console.log('Classified as match ' + classification_str);
-
-// 	// remove table
-// 	table.fadeOut(transition_time,  function(){
-
-// 		if (classification_str === "match"){
-// 			// match (right)
-
-// 			table.removeClass().addClass('match');
-// 			onchange();
-
-// 			// get next pair
-// 			iterate(next_pair(table));
-
-// 		} else if (classification_str === "distinct"){
-// 			// distinct (left)
-// 			console.log('Classified as distinct ' + table.attr('id'));
-
-// 			table.removeClass().addClass('distinct');
-// 			onchange();
-
-// 			iterate(next_pair(table));
-
-// 		} else if (classification_str === "is_unknown_button"){
-// 			// next
-// 			console.log('Next pair ' + table.attr('id'));
-
-// 			// get next pair
-// 			iterate(next_pair(table));
-
-// 		} 
-// 	});
-// }
 
 function next_pair(table){
 
@@ -407,46 +349,45 @@ function btn_matches(){
 
 function navigation(){
 
-	// console.log('#' + current_mode + 'button');
-	// console.log($('#' + current_mode + 'button a'));
-
 	$('#allbutton a').addClass('active'); 
 
 	$(".navbutton").click(function(){
 
-		// clear keydown event listener
-		$(document).unbind('keydown');
+		// // clear keydown event listener
+		// $(document).unbind('keydown');
 
-		var button_clicked = $(this).attr('id');
+		console.log("Button clicked: " + $(this).attr('id'));
 
-		console.log("Button clicked: " + button_clicked);
-
-		if (button_clicked === 'nonmatchbutton'){
+		if ($(this).attr('id') === 'nonmatchbutton'){
 			current_mode = 'distinct';
 			$('#navigation a').removeClass('active');
 			$('#nonmatchbutton a').addClass('active');
-		} else if (button_clicked === 'matchbutton'){
+
+		} else if ($(this).attr('id') === 'matchbutton'){
 			current_mode = 'match';
 			$('#navigation a').removeClass('active');
 			$('#matchbutton a').addClass('active');
-		} else if (button_clicked === 'unknownbutton'){
+
+		} else if ($(this).attr('id') === 'unknownbutton'){
 			current_mode = 'unknown';
 			$('#navigation a').removeClass('active');
 			$('#unknownbutton a').addClass('active');
-		} else if (button_clicked === 'allbutton'){
+
+		} else if ($(this).attr('id') === 'allbutton'){
 			current_mode = 'all';
 			$('#navigation a').removeClass('active');
 			$('#allbutton a').addClass('active');
-
 		}
 
-		// stop comparing, fade out
-		$.when($('#content').children().fadeOut(transition_time)).done(function(){
+		if (started){
+			// stop comparing, fade out
+			$.when($('#content').children().fadeOut(transition_time)).done(function(){
 
-			// console.log('test')
+				// console.log('test')
 
-			iterate(first_pair());
-		});
+				iterate(first_pair());
+			});
+		}
 		
 	});
 
