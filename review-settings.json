@@ -1,0 +1,84 @@
+{
+    "version":1,
+    "analysis":"simple",
+    "records":{
+        "census1990":{
+            "url":"example\/febrl4a.csv",
+            "seperator":",",
+            "description":"Census data of 1990.",
+            "index_column":"rec_id"
+        },
+        "census2000":{
+            "url":"example\/febrl4b.csv",
+            "seperator":",",
+            "description":"Census data of 2000.",
+            "index_column":"rec_id"
+        }
+    },
+    "compare":[
+        {
+            "values":[
+                {
+                    "records":"census1990",
+                    "label":"given_name",
+                    "encoded":"encoded value, for example soundex (future)"
+                },
+                {
+                    "records":"census2000",
+                    "label":"given_name",
+                    "encoded":"encoded value, for example soundex (future)"
+                }
+            ],
+            "type":"data type (future)",
+            "value":"comparison label (future)"
+        },
+        {
+            "values":[
+                {
+                    "records":"census1990",
+                    "label":"surname"
+                },
+                {
+                    "records":"census2000",
+                    "label":"surname"
+                }
+            ]
+        },
+        {
+            "values":[
+                {
+                    "records":"census1990",
+                    "label":"date_of_birth"
+                },
+                {
+                    "records":"census2000",
+                    "label":"date_of_birth"
+                }
+            ]
+        },
+        {
+            "values":[
+                {
+                    "records":"census1990",
+                    "label":"suburb"
+                },
+                {
+                    "records":"census2000",
+                    "label":"suburb"
+                }
+            ]
+        },
+        {
+            "values":[
+                {
+                    "records":"census1990",
+                    "label":"postcode"
+                },
+                {
+                    "records":"census2000",
+                    "label":"postcode"
+                }
+            ]
+        }
+    ]
+}

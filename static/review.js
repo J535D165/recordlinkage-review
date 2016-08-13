@@ -9,11 +9,16 @@ var no_record_message = 'What whut, no records (left)!';
 // INTERNALS
 var started = false;
 
+var settings = Object;
+
+var datasets = Object;
+
 /**********************
 	USER INTERFACE
 **********************/
 
-function create_table_pair(link, source, target){
+
+function create_table(link, source, target){
 	// Function to create html tables
 	// Useful for inserting in page
 
@@ -67,25 +72,7 @@ function create_table_pair(link, source, target){
 	return table
 }
 
-function count_matches(){
-	a = $('#content').find('table.match');
-
-	return a.length
-}
-
-function count_non_matches(){
-	a = $('#content').find('table.distinct');
-
-	return a.length
-}
-
-function count_unknown(){
-	a = $('#content').find('table.unknown');
-
-	return a.length
-}
-
-function onchange(){
+function update_counts(){
 
 	m = count_matches();
 	u = count_non_matches();
@@ -97,6 +84,10 @@ function onchange(){
 	$('#unknownbutton span').text(count_unknown()).fadeIn(600);
 	$('#allbutton span').text(m+u+q).fadeIn(600);
 
+}
+
+function message(msg){
+	$('#message').html(msg);
 }
 
 function warning(msg){
@@ -113,33 +104,27 @@ function warning(msg){
 	
 }
 
+function error(msg) {
+	if (msg){
+		return "Error: " + msg
+	} else {
+		return "An error occured!"
+	}
+}
+
 /**********************
-        INTERNAL
+        API
 **********************/
-
-// function get_record(tree, _document, _id){
-
-// 	var record;
-// 	$.each(tree['records'], function(_, record_i){
-
-// 		if ((record_i._document == _document) & (record_i._id == _id)){
-// 			record = record_i;
-// 		}
-// 	});
-
-// 	return record
-// };
-
 
 function start(){
 
 	// starting message
-	$('#loading').fadeOut(600, function(){
+	$('#message').fadeOut(600, function(){
 
 		navigation();
 
 		// start at keypress
-		$('#press_key').fadeIn(600);
+		$('#message').html("<p>Press a key to get started!</p>").fadeIn(600);
 
 		$("#download-btn").click(function(){
 			this.href = "data:text/plain;charset=UTF-8," + encodeURIComponent(download())
@@ -153,9 +138,9 @@ function start(){
 
 			started = true;
 
-			onchange();
+			update_counts();
 
-			$('#press_key').fadeOut(600, function(){
+			$('#message').fadeOut(600, function(){
 
 				// start with first record
 				iterate(first_pair());
@@ -178,6 +163,56 @@ function download(){
 	});
 
 	return result_str
+}
+
+function count_matches(){
+	a = $('#content').find('table.match');
+
+	return a.length
+}
+
+function count_non_matches(){
+	a = $('#content').find('table.distinct');
+
+	return a.length
+}
+
+function count_unknown(){
+	a = $('#content').find('table.unknown');
+
+	return a.length
+}
+
+function read_data(url, callback){
+
+	$.get(url, function(data){
+
+		console.log("Get file " + url);
+
+		// If file is json file, parsing is not needed
+		if (/json$/.test(url)){
+
+			return callback(data)
+
+		// Else parse it with jquery.csv.js
+		} else {
+
+			var parse_options = {}
+
+			// // Default seperator is ,
+			// if (value["seperator"]){
+			// 	parse_options["seperator"] = value["seperator"];
+			// } 
+
+			console.log("Data needs to be parsed");
+
+			return callback($.csv.toObjects(data))
+
+		}
+
+	}).fail(function(){
+		console.log('Error loading file.');
+	});
 }
 
 // show pair (visual and bindings) --> classify (give class) --> hide pair ()
@@ -276,7 +311,7 @@ function classify_pair(event, table){
 		next =null; //Do not go to the following or previous record
 	}	
 
-	onchange();
+	update_counts();
 
 	if ((next ==true ) || (next == false)){
 		// remove table
@@ -290,8 +325,6 @@ function classify_pair(event, table){
 	} else{
 
 	}
-
-
 }
 
 function disable_controls(){
@@ -334,17 +367,6 @@ function prev_pair(table){
 	} else {
 		return table.prev('table.' + current_mode)
 	}
-}
-
-
-
-
-function is_valid(json){
-	return true
-}
-
-function btn_matches(){
-	console.log("testttt")
 }
 
 function navigation(){
@@ -393,63 +415,139 @@ function navigation(){
 
 }
 
-$(document).ready(function(){
+function make_index(indexType){
 
-    var previousScroll = 0;
+	if (index == "simple"){
+		return simple_index()
+	}
+}
+
+function simple_index(fileA,fileB) {
+	
+	$.each(fileA, function(index, value){
+
+		
+		
+	});
+
+}
+
+
+/**********************
+        SETTINGS
+**********************/
+
+function get_settings() {
+	return settings
+}
+
+function set_settings(json_settings) {
+
+	// Validate settings
+
+	// set settings
+	settings = json_settings;
+}
+
+function is_valid(json){
+	return true
+}
+
+/**********************
+        Start
+**********************/
+
+$(document).ready(function(){
 
 	var d = new Date();
 	var starttime = d.getTime();
 
+	console.log("Start program");
+
+	// start message
+	$("#message").text("Picking flowers")
+
 	// load the data
-	$.ajax({
-		url: "../example/data.json",
-		dataType: "json",
-		success: function(data){
+	$.getJSON( "review-settings.json", function( settings ) {
 
-			forest = data['forest'];
-			trees = forest['tree'];
-
-			if (!is_valid(data)){
-				alert('Problem with the data! Fix this first.');
-			}
-
-			$.each(trees, function(tree_i, tree){
-
-				$.each(tree['links'], function(link_i, link){
-
-					is_match = link._match;
-
-					// The three things needed
-					console.log(link);
-					console.log(tree.source[link.source._id]);
-					console.log(tree.target[link.target._id]);
-
-					jquery_table = create_table_pair(link, tree.source[link.source._id], tree.target[link.target._id]);
-					jquery_table.data("targetID", link.target._id);
-					jquery_table.data("sourceID", link.source._id);
-
-					$('#content').append(jquery_table);
-
-				});
-
-			});
-
-			// Let the linking begin
-			if ((d.getTime() - starttime) < min_loading_time){
-				setTimeout(function(){
-					start();
-				}, min_loading_time);
-			} else{
-				start();
-			}
-		},
-		error: function(){
-			console.log('Error loading the file.');
+		if (!is_valid(settings)){
+			alert('Incorrect settings file.');
 		}
+
+		console.log("Settings loaded")
+		console.log(settings)
+
+		var n_files_loaded = 0;
+
+		// Load all files
+		$.each( settings['records'], function( key, value ) {
+
+			console.log(value["url"])
+
+			// Load the file, dataType is a guess
+			read_data(value["url"], function(data){
+
+				// Store dataset
+				datasets[key] = data
+
+				n_files_loaded += 1;
+
+				console.log(Object.keys(settings['records']).length);
+				console.log(n_files_loaded);
+
+				// If all files are loaded, start
+				if (n_files_loaded == Object.keys(settings['records']).length){
+
+					console.log("All files loaded: start");
+					console.log(datasets["census1990"]);
+
+					// Start, but not too fast
+					if ((d.getTime() - starttime) < min_loading_time){
+						
+						setTimeout(start, min_loading_time);
+
+					} else{
+						
+						start();
+
+					}
+				}
+			})
+			
+		});
+
+	}).fail(function() {
+		console.log('Error loading review-settings.json.');
 	});
-
-
 });
+
+
+
+
+		// $.each(trees, function(tree_i, tree){
+
+		// 	$.each(tree['links'], function(link_i, link){
+
+		// 		is_match = link._match;
+
+		// 		// The three things needed
+		// 		console.log(link);
+		// 		console.log(tree.source[link.source._id]);
+		// 		console.log(tree.target[link.target._id]);
+
+		// 		jquery_table = create_table(link, tree.source[link.source._id], tree.target[link.target._id]);
+		// 		jquery_table.data("targetID", link.target._id);
+		// 		jquery_table.data("sourceID", link.source._id);
+
+		// 		$('#content').append(jquery_table);
+
+		// 	});
+
+		// });
+
+
+
+
 
 // (function () {
 //     var previousScroll = 0;
