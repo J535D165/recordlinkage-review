@@ -17,53 +17,48 @@ var datasets = Object;
 	USER INTERFACE
 **********************/
 
-
-function create_table(link, source, target){
+function create_table(rec1, rec2){
 	// Function to create html tables
 	// Useful for inserting in page
 
-	if (!link._match){
-		match_class = 'unknown';
-	} else{
-		match_class = link._match;
-	}
+	match_class = 'unknown';
 
 	// console.log(records)
 
-	th_source = [];
-	td_source = [];
-	td_target = [];
-	th_target = [];
+	th_rec1 = [];
+	td_rec1 = [];
+	td_rec2 = [];
+	th_rec2 = [];
 
-	$.each(link.compare, function(_, c){
+	$.each(settings.compare, function(_, c){
 
-		if ((c._source in source) ){
-			th_source.push('<th>' + c._source + '</th>');
+		if (!c.values[0]){
+			th_rec1.push('<th>' + c.values[0]["label"] + '</th>');
 		} else{
-			th_source.push('<th class="blank-cell"></th>');
+			th_rec1.push('<th class="blank-cell"></th>');
 		}
 
-		if ((c._source in source) ){
-			td_source.push('<td>' + source[c._source] + '</td>');
+		if (!c.values[0]){
+			td_rec1.push('<td>' + rec1[c.values[0]["label"]] + '</td>');
 		} else {
-			td_source.push('<td></td>');
+			td_rec1.push('<td></td>');
 		}
 
-		if ((c._target in target) ){
-			td_target.push('<td>' + target[c._target] + '</td>');
+		if (!c.values[1]){
+			td_rec2.push('<td>' + rec1[c.values[1]["label"]] + '</td>');
 		} else {
-			td_target.push('<td></td>');
+			td_rec2.push('<td></td>');
 		}
 
-		if ((c._target in target) ){
-			th_target.push('<th>' + c._target + '</th>');
+		if (!c.values[1]){
+			th_rec2.push('<th>' + c.values[1]["label"] + '</th>');
 		} else{
-			th_target.push('<th class="blank-cell"></th>');
+			th_rec2.push('<th class="blank-cell"></th>');
 		}
 
 	});
 
-	var table_str = '<table>' + '<tr>' + th_source.join("") + '</tr>' + '<tr>' + td_source.join("") + '</tr>' + '<tr>' + td_target.join("") + '</tr>' + '<tr>' + th_target.join("") + '</tr>' + '</table>';
+	var table_str = '<table>' + '<tr>' + th_rec1.join("") + '</tr>' + '<tr>' + td_rec1.join("") + '</tr>' + '<tr>' + td_rec2.join("") + '</tr>' + '<tr>' + th_rec2.join("") + '</tr>' + '</table>';
 
 	table = $(table_str);
 	table.hide();
@@ -115,39 +110,6 @@ function error(msg) {
 /**********************
         API
 **********************/
-
-function start(){
-
-	// starting message
-	$('#message').fadeOut(600, function(){
-
-		navigation();
-
-		// start at keypress
-		$('#message').html("<p>Press a key to get started!</p>").fadeIn(600);
-
-		$("#download-btn").click(function(){
-			this.href = "data:text/plain;charset=UTF-8," + encodeURIComponent(download())
-		});
-
-		// Add a key listener to start
-		$(document).one( "keydown", function() {
-
-			// Remove the message and start comparing
-			console.log('Start with reviewing the first record pair.')
-
-			started = true;
-
-			update_counts();
-
-			$('#message').fadeOut(600, function(){
-
-				// start with first record
-				iterate(first_pair());
-			});
-		})
-	});
-}
 
 function download(){
 
@@ -214,8 +176,6 @@ function read_data(url, callback){
 		console.log('Error loading file.');
 	});
 }
-
-// show pair (visual and bindings) --> classify (give class) --> hide pair ()
 
 function show_pair(table){
 
@@ -369,51 +329,6 @@ function prev_pair(table){
 	}
 }
 
-function navigation(){
-
-	$('#allbutton a').addClass('active'); 
-
-	$(".navbutton").click(function(){
-
-		// // clear keydown event listener
-		// $(document).unbind('keydown');
-
-		console.log("Button clicked: " + $(this).attr('id'));
-
-		if ($(this).attr('id') === 'nonmatchbutton'){
-			current_mode = 'distinct';
-			$('#navigation a').removeClass('active');
-			$('#nonmatchbutton a').addClass('active');
-
-		} else if ($(this).attr('id') === 'matchbutton'){
-			current_mode = 'match';
-			$('#navigation a').removeClass('active');
-			$('#matchbutton a').addClass('active');
-
-		} else if ($(this).attr('id') === 'unknownbutton'){
-			current_mode = 'unknown';
-			$('#navigation a').removeClass('active');
-			$('#unknownbutton a').addClass('active');
-
-		} else if ($(this).attr('id') === 'allbutton'){
-			current_mode = 'all';
-			$('#navigation a').removeClass('active');
-			$('#allbutton a').addClass('active');
-		}
-
-		if (started){
-			// stop comparing, fade out
-			$.when($('#content').children().fadeOut(transition_time)).done(function(){
-
-				// console.log('test')
-
-				iterate(first_pair());
-			});
-		}
-		
-	});
-
-}
 
 function make_index(indexType){
 
@@ -426,8 +341,8 @@ function simple_index(fileA,fileB) {
 	
 	$.each(fileA, function(index, value){
 
-		
-		
+
+
 	});
 
 }
@@ -437,24 +352,12 @@ function simple_index(fileA,fileB) {
         SETTINGS
 **********************/
 
-function get_settings() {
-	return settings
-}
-
-function set_settings(json_settings) {
-
-	// Validate settings
-
-	// set settings
-	settings = json_settings;
-}
-
-function is_valid(json){
+function is_valid(settings){
 	return true
 }
 
 /**********************
-        Start
+    Initialize/Loading
 **********************/
 
 $(document).ready(function(){
@@ -468,10 +371,12 @@ $(document).ready(function(){
 	$("#message").text("Picking flowers")
 
 	// load the data
-	$.getJSON( "review-settings.json", function( settings ) {
+	$.getJSON( "review-settings.json", function( settings_data ) {
 
-		if (!is_valid(settings)){
+		if (!is_valid(settings_data)){
 			alert('Incorrect settings file.');
+		} else {
+			settings = settings_data;
 		}
 
 		console.log("Settings loaded")
@@ -521,51 +426,72 @@ $(document).ready(function(){
 	});
 });
 
+function start(){
 
+	// starting message
+	$('#message').fadeOut(600, function(){
 
+		// start at keypress
+		$('#message').html("<p>Press a key to get started!</p>").fadeIn(600);
 
-		// $.each(trees, function(tree_i, tree){
+		// Add a key listener to start
+		$(document).one( "keydown", function() {
 
-		// 	$.each(tree['links'], function(link_i, link){
+			// Remove the message and start comparing
+			console.log('Start with reviewing the first record pair.')
 
-		// 		is_match = link._match;
+			started = true;
 
-		// 		// The three things needed
-		// 		console.log(link);
-		// 		console.log(tree.source[link.source._id]);
-		// 		console.log(tree.target[link.target._id]);
+			navigation();
 
-		// 		jquery_table = create_table(link, tree.source[link.source._id], tree.target[link.target._id]);
-		// 		jquery_table.data("targetID", link.target._id);
-		// 		jquery_table.data("sourceID", link.source._id);
+			update_counts();
 
-		// 		$('#content').append(jquery_table);
+			$('#message').fadeOut(600, function(){
 
-		// 	});
+				// start with first record
+				iterate(first_pair());
+			});
+		})
+	});
+}
 
-		// });
+function navigation(){
 
+	$("#download-btn").click(function(){
+		this.href = "data:text/plain;charset=UTF-8," + encodeURIComponent(download())
+	});
 
+	// Always start with "all" records. 
+	$('#allbutton a').addClass('active'); 
 
+	// What to do when one of the buttons is pressed. 
+	$(".navbutton").click(function(){
 
+		console.log("Navigation button clicked: " + $(this).attr('id'));
 
-// (function () {
-//     var previousScroll = 0;
+		$('#navigation a').removeClass('active');
+		$(this).children('a').addClass('active');
 
+		if ($(this).attr('id') === 'nonmatchbutton'){
+			current_mode = 'distinct';
 
-    
-//     $('#content').scroll(function () {
-//     	console.log('test')
+		} else if ($(this).attr('id') === 'matchbutton'){
+			current_mode = 'match';
 
-//        var currentScroll = $(this).scrollTop();
-//        if (currentScroll > previousScroll){
-//            alert('down');
-//        }
-//        else {
-//           alert('up');
-//        }
-//        previousScroll = currentScroll;
-//     });
-// }());
+		} else if ($(this).attr('id') === 'unknownbutton'){
+			current_mode = 'unknown';
 
+		} else if ($(this).attr('id') === 'allbutton'){
+			current_mode = 'all';
+		}
+
+		// Change to the new set
+		$.when($('#content').children().fadeOut(transition_time)).done(function(){
+
+			iterate(first_pair());
+		});
+		
+	});
+
+}
 
