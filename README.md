@@ -1,12 +1,20 @@
 Record Linkage Review
 =====================
 
-This tool is a record comparing tool useful for record linkage. It can be used to make a golden dataset or to validate your record linkage.
+**Record Linkage Review** is a browser-tool to compare two or more records on specified fields. Such a tool is often needed in deduplication or linking datasets. A few of the possible uses:
+
+- Link records in small datasets.
+- Verify an existing record linkage.
+- Make a golden dataset for training classifiers.
+
+Record Linkage Review has a user friendly interface. The interface is extraction free/low to prevent human errors. 
+
+![Image of RLR](docs/images/review.png)
 
 Getting started
 ---------------
 
-Start with running a local static file server. This is needed to prevent issues with cross-site scripting. A few examples are listed below: 
+The **Record Linkage Review** tool runs in the browser and needs a local file server (to prevent issues with cross-site scripting). Start with running a local static file server.  A few examples are listed below: 
 
 Python 2
 
@@ -29,10 +37,12 @@ $ static -p 8000
 
 Is your favorate programming language not listed above? See https://gist.github.com/willurd/5720255 for more static file servers. 
 
-Then navigate in your browser to http://localhost:8000/review.html. Now you can start comparing records.
+Then navigate in your browser to http://localhost:8000/review.html. Now you can start comparing records. 
 
-Reviewer
---------
+Reviewing
+---------
+
+The reviewer reviews the records pairs with it's keyboard or by clicking the classification button.
 
 Features:
 
@@ -40,10 +50,10 @@ Features:
 - Use buttons for classification
 - Use navigation menu for changing categories. 
 
-Developer
----------
+Configuration
+-------------
 
-The developer can make a use of this tool by making a json file with all information. The JSON file needs to have the following structure:
+Before the reviewer can start, a configuration file needs to be made. This file specifies the record files to compare. Here you can also specify which fields to compare with each other. The settings are stored in a JSON file and it has the following structure:
 
 ``` json
 {
@@ -69,30 +79,18 @@ The developer can make a use of this tool by making a json file with all informa
             "values":[
                 {
                     "records":"census1990",
-                    "label":"name",
-                    "encoded":"encoded value, for example soundex (future)"
+                    "label":"name"                
                 },
                 {
                     "records":"census2000",
-                    "label":"firstname",
-                    "encoded":"encoded value, for example soundex (future)"
+                    "label":"firstname"
                 }
             ],
-            "type":"data type (future)",
-            "value":"comparison label (future)"
+            "type":"string"
         },
-        {
-            "values":[
-                {
-                    "records":"census1990",
-                    "label":"lastname"
-                },
-                {
-                    "records":"census2000",
-                    "label":"lastname"
-                }
-            ]
-        },
+ 
+        ...
+
         {
             "values":[
                 {
@@ -101,33 +99,10 @@ The developer can make a use of this tool by making a json file with all informa
                 },
                 {
                     "records":"census2000",
-                    "label":"dob"
-                }
-            ]
-        },
-        {
-            "values":[
-                {
-                    "records":"census1990",
-                    "label":"hometown"
+                    "label":"date_of_birth"
                 },
-                {
-                    "records":"census2000",
-                    "label":"hometown"
-                }
-            ]
-        },
-        {
-            "values":[
-                {
-                    "records":"census1990",
-                    "label":"gender"
-                },
-                {
-                    "records":"census2000",
-                    "label":"sex"
-                }
-            ]
+            ],
+            "type":"string"
         }
     ]
 }
