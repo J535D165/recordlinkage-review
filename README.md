@@ -1,6 +1,9 @@
 Record Linkage Review
 =====================
 
+Please don't use. Experimental.
+===============================
+
 **Record Linkage Review** is a browser-tool to compare two or more records on specified fields. Such a tool is often needed in deduplication or linking datasets. A few of the possible uses:
 
 - Link records in small datasets.
